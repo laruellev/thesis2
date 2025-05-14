@@ -25,11 +25,17 @@ hist = hist.iloc[1:]
 hist["Volatility"] = hist.LogReturn.rolling(window=20).std()*np.sqrt(252)
 # 20 daily returns = 1 trading month, annualized
 hist = hist.dropna()
-
+'''
 # Plot the stock price over time
 plt.plot(hist["Close"])
 plt.grid()
 plt.ylabel(f'{ticker}' " stock price")
+plt.show()
+
+# Plot the log return over time
+plt.plot(hist["LogReturn"])
+plt.grid()
+plt.ylabel(f'{ticker}' " log return")
 plt.show()
 
 # Plot the volatility over time
@@ -50,7 +56,7 @@ plt.plot(rf_plot["Price"])
 plt.ylabel("Risk free rate in %")
 plt.grid()
 plt.show()
-
+'''
 # Combine all the date into one dataframe
 hist["Date"] = hist.index.strftime('%m/%d/%Y')
 hist = hist.reset_index(drop=True)
@@ -65,6 +71,10 @@ for i in range(len(data)):
 data = data.sort_values(by='Date')
 data = data.dropna()
 data = data.reset_index(drop=True)
+
+data_to_latex = data.truncate(after=10)
+data_to_latex = data_to_latex.iloc[:, -6:]
+print(data_to_latex.to_latex(index=False))
 
 # Calculate the Black-Scholes-Merton prices of European put and call options, and check for put-call parity
 
@@ -109,13 +119,26 @@ for i in range(len(data)):
     data["check"].iloc[i] = check_put_call_parity(data["eu_call"][i], data["eu_put"][i], data["Close"][i],
                                       np.average(data["Close"]), T, data["rf"][i])
 print(data['check'].value_counts())
-
+'''
 plt.plot(data["eu_call"], label=f'{ticker}' " European call")
 plt.plot(data["eu_put"], label=f'{ticker}' " European put")
 plt.legend()
 plt.grid()
 plt.title(f'{ticker}' " put and call prices")
 plt.show()
+'''
+
+# Compute the amount of days to expiration
+data["Year"] = data["Date"].str[0:4].astype(int)
+data["Month"] = data["Date"].str[4:6].astype(int)
+data["Day"] = data["Date"].str[6:8].astype(int)
+data["Datetime"] = np.nan
+for i in range(len(data)):
+    data["Datetime"].iloc[i] = dt.datetime(data["Year"][i], data["Month"][i], data["Day"][i])
+expiry = data["Datetime"][len(data)-1]
+data["Expiry"] = np.nan
+for i in range(len(data)):
+    data["Expiry"].iloc[i] = np.busday_count(data["Datetime"][i].date(), expiry.date())
 
 # Compute the Delta of an option
 
@@ -131,29 +154,19 @@ def black_scholes_delta(S, K, T, r, sigma, option_type):
 
 data["delta_call"] = np.nan
 for i in range(len(data)):
-    data["delta_call"].iloc[i] = black_scholes_delta(data["Close"][i], np.average(data["Close"]),
-                                                     T, data["rf"][i], data["Volatility"][i], option_type="call")
+    data["delta_call"].iloc[i] = black_scholes_delta(data["Close"][i], np.average(data["Close"]), data["Expiry"][i]/365,
+                                                     data["rf"][i], data["Volatility"][i], option_type="call")
 data["delta_put"] = np.nan
 for i in range(len(data)):
-    data["delta_put"].iloc[i] = black_scholes_delta(data["Close"][i], np.average(data["Close"]),
-                                                    T, data["rf"][i], data["Volatility"][i], option_type="put")
-
+    data["delta_put"].iloc[i] = black_scholes_delta(data["Close"][i], np.average(data["Close"]), data["Expiry"][i]/365,
+                                                    data["rf"][i], data["Volatility"][i], option_type="put")
+'''
 plt.plot(data["delta_call"], label=f'{ticker}' " EU call Delta")
 plt.plot(data["delta_put"], label=f'{ticker}' " EU put Delta")
 plt.legend()
 plt.grid()
 plt.title(f'{ticker}' " put and call options' Delta")
 plt.show()
+'''
 
-# Compute the amount of days to expiration
-data["Year"] = data["Date"].str[0:4].astype(int)
-data["Month"] = data["Date"].str[4:6].astype(int)
-data["Day"] = data["Date"].str[6:8].astype(int)
-data["Datetime"] = np.nan
-for i in range(len(data)):
-    data["Datetime"].iloc[i] = dt.datetime(data["Year"][i], data["Month"][i], data["Day"][i])
-expiry = data["Datetime"][len(data)-1]
-data["Expiry"] = np.nan
-for i in range(len(data)):
-    data["Expiry"].iloc[i] = np.busday_count(data["Datetime"][i].date(), expiry.date())
-a = 0
+# data.to_csv(dl+"/thesis_data.csv", index=False)
