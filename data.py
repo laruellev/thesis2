@@ -160,13 +160,14 @@ data["delta_put"] = np.nan
 for i in range(len(data)):
     data["delta_put"].iloc[i] = black_scholes_delta(data["Close"][i], np.average(data["Close"]), data["Expiry"][i]/365,
                                                     data["rf"][i], data["Volatility"][i], option_type="put")
-'''
+
 plt.plot(data["delta_call"], label=f'{ticker}' " EU call Delta")
 plt.plot(data["delta_put"], label=f'{ticker}' " EU put Delta")
 plt.legend()
 plt.grid()
 plt.title(f'{ticker}' " put and call options' Delta")
 plt.show()
-'''
+
+a = 0
 
 # data.to_csv(dl+"/thesis_data.csv", index=False)
