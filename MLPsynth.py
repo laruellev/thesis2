@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import datetime as dt
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
-from sklearn.metrics import accuracy_score
+from MLPhist import data_mlp as data_mlp_hist
 
 cwd = '/Users/vlr/PycharmProjects/thesis'
 dl = '/Users/vlr/Downloads/Masters/python'
@@ -38,16 +38,6 @@ for i in range(len(data)):
         data["cost_tot"].iloc[i] = data_truncated1["cost"].sum() + data_truncated2["interest"].sum()
         data["interest"].iloc[i] = data["cost_tot"][i]*(np.exp((data["rf"][i]/365))-1)
 
-for i in range(len(data)):
-    data["Datetime"].iloc[i] = dt.datetime(data["Year"][i], data["Month"][i], data["Day"][i])
-plt.plot(data["Datetime"], data["shares_purchased"], label="Shares bought or sold")
-plt.plot(data["Datetime"], data["shares_tot"], label="Total shares")
-plt.grid()
-plt.ylabel("Shares")
-plt.xlabel("Time")
-plt.legend()
-plt.show()
-
 data_mlp = data[["Close", "LogReturn", "Volatility", "rf", "eu_call", "Expiry", "delta_call", "shares_purchased"]]
 data_mlp["Close"] = data_mlp["Close"]/100
 data_mlp["LogReturn"] = data_mlp["LogReturn"]*10
@@ -55,6 +45,18 @@ data_mlp["rf"] = data_mlp["rf"]*10
 data_mlp["eu_call"] = data_mlp["eu_call"]/100
 data_mlp["Expiry"] = data_mlp["Expiry"]/1000
 data_mlp["shares_purchased"] = data_mlp["shares_purchased"]/10000
+noise = np.random.normal(0, 0.1, len(data_mlp))  # Gaussian noise
+data_mlp["shares_purchased"] = data_mlp["shares_purchased"] + noise
+
+for i in range(len(data)):
+    data["Datetime"].iloc[i] = dt.datetime(data["Year"][i], data["Month"][i], data["Day"][i])
+plt.plot(data_mlp_hist["shares_purchased"], label="Shares bought or sold")
+plt.plot(data_mlp["shares_purchased"], label="Shares bought or sold with noise")
+plt.grid()
+plt.ylabel("Shares")
+plt.xlabel("Time")
+plt.legend()
+plt.show()
 
 corr = data_mlp.corr()
 
@@ -99,4 +101,3 @@ for i in range(len(y_test_acc)):
         errs.append(False)
 acc = errs.count(True)/len(errs) * 100
 print("model accuracy:", acc, "%")
-a = 0
