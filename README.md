@@ -1,5 +1,5 @@
 This repository contains all the code required to replicate the Master's thesis "Comparative study of machine Learning methods for Delta Hedging of Options", 
-for the Master complémentaire en gestion des risques financiers. 
+for the Master complémentaire en gestion des risques financiers at UCLouvain.
 
 1. options contains the code required to extract historical data from yahoo finance
 2. data contains the code required to extract historical data from yahoo finance as well as all the data preprocessing
