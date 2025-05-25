@@ -3,6 +3,9 @@ import numpy as np
 import datetime as dt
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+import matplotlib.pyplot as plt
+import graphviz
 
 cwd = '/Users/vlr/PycharmProjects/thesis'
 dl = '/Users/vlr/Downloads/Masters/python'
@@ -57,6 +60,15 @@ clf = DecisionTreeClassifier()
 
 # Train Decision Tree classifier
 clf = clf.fit(x_train,y_train)
+
+# Plot the tree
+plt.figure(figsize=(20,10))
+tree.plot_tree(clf,
+               feature_names=x.columns,
+               class_names=["Sell", "Buy"],
+               filled=True,
+               rounded=True)
+plt.show()
 
 # Predict the response for test dataset
 preds = clf.predict(x_test)
