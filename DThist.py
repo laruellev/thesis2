@@ -68,6 +68,7 @@ tree.plot_tree(clf,
                class_names=["Sell", "Buy"],
                filled=True,
                rounded=True)
+#  plt.savefig(dl+"DThist.pdf", format="pdf", bbox_inches="tight")
 plt.show()
 
 # Predict the response for test dataset
