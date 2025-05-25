@@ -75,7 +75,7 @@ plt.show()
 # 0. get ready
 print("Begin scikit neural network regression example ")
 print("Predict shares purchased from other financial data")
-np.random.seed(69)
+np.random.seed(82)
 np.set_printoptions(precision=3, suppress=True)
 
 # 1. load data
