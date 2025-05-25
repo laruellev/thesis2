@@ -47,16 +47,30 @@ plt.xlabel("Time")
 plt.legend()
 plt.show()
 
-data_mlp = data[["Close", "LogReturn", "Volatility", "rf", "eu_call", "Expiry", "delta_call", "shares_purchased"]]
+data_mlp = data[["Close", "LogReturn", "Volatility", "rf", "shares_purchased"]]
+# removed: "eu_call", "Expiry", "delta_call"
 data_mlp["Close"] = data_mlp["Close"]/100
 data_mlp["LogReturn"] = data_mlp["LogReturn"]*10
 data_mlp["rf"] = data_mlp["rf"]*10
-data_mlp["eu_call"] = data_mlp["eu_call"]/100
-data_mlp["Expiry"] = data_mlp["Expiry"]/1000
+# data_mlp["eu_call"] = data_mlp["eu_call"]/100
+# data_mlp["Expiry"] = data_mlp["Expiry"]/1000
 data_mlp["shares_purchased"] = data_mlp["shares_purchased"]/10000
 
+# Fill diagonal and upper half with NaNs
 corr = data_mlp.corr()
-
+corr.style.background_gradient(cmap='coolwarm')
+mask = np.zeros_like(corr, dtype=bool)
+mask[np.triu_indices_from(mask)] = True
+corr[mask] = np.nan
+(corr
+ .style
+ .background_gradient(cmap='coolwarm', axis=None, vmin=-1, vmax=1)
+ .highlight_null(color='#f1f1f1')  # Color NaNs grey
+ .format(precision=2))
+plt.matshow(corr)
+cb = plt.colorbar()
+cb.ax.tick_params()
+plt.show()
 
 # 0. get ready
 print("Begin scikit neural network regression example ")
@@ -65,7 +79,7 @@ np.random.seed(69)
 np.set_printoptions(precision=3, suppress=True)
 
 # 1. load data
-x = data_mlp[["Close", "LogReturn", "Volatility", "rf", "eu_call", "Expiry", "delta_call"]]
+x = data_mlp[["Close", "LogReturn", "Volatility", "rf"]]  # "eu_call", "Expiry", "delta_call"
 y = data_mlp[["shares_purchased"]]
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=0, train_size=.75)
 

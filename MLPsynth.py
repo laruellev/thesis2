@@ -38,12 +38,12 @@ for i in range(len(data)):
         data["cost_tot"].iloc[i] = data_truncated1["cost"].sum() + data_truncated2["interest"].sum()
         data["interest"].iloc[i] = data["cost_tot"][i]*(np.exp((data["rf"][i]/365))-1)
 
-data_mlp = data[["Close", "LogReturn", "Volatility", "rf", "eu_call", "Expiry", "delta_call", "shares_purchased"]]
+data_mlp = data[["Close", "LogReturn", "Volatility", "rf", "shares_purchased"]]  # "eu_call", "Expiry", "delta_call"
 data_mlp["Close"] = data_mlp["Close"]/100
 data_mlp["LogReturn"] = data_mlp["LogReturn"]*10
 data_mlp["rf"] = data_mlp["rf"]*10
-data_mlp["eu_call"] = data_mlp["eu_call"]/100
-data_mlp["Expiry"] = data_mlp["Expiry"]/1000
+# data_mlp["eu_call"] = data_mlp["eu_call"]/100
+# data_mlp["Expiry"] = data_mlp["Expiry"]/1000
 data_mlp["shares_purchased"] = data_mlp["shares_purchased"]/10000
 noise = np.random.normal(0, 0.1, len(data_mlp))  # Gaussian noise
 data_mlp["shares_purchased"] = data_mlp["shares_purchased"] + noise
@@ -68,7 +68,7 @@ np.random.seed(69)
 np.set_printoptions(precision=3, suppress=True)
 
 # 1. load data
-x = data_mlp[["Close", "LogReturn", "Volatility", "rf", "eu_call", "Expiry", "delta_call"]]
+x = data_mlp[["Close", "LogReturn", "Volatility", "rf"]]  # "eu_call", "Expiry", "delta_call"
 y = data_mlp[["shares_purchased"]]
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=0, train_size=.75)
 
