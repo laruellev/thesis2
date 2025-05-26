@@ -47,6 +47,31 @@ plt.xlabel("Time")
 plt.legend()
 plt.show()
 
+plt.plot(data["Datetime"], data["interest"], label="Cost of interest")
+plt.plot(data["Datetime"], data["cost"], label="Cost of shares")
+plt.plot(data["Datetime"], data["cost_tot"], label="Total cost")
+plt.grid()
+plt.ylabel("Cost in thousand $")
+plt.xlabel("Time")
+plt.legend()
+plt.show()
+
+fig, axs = plt.subplots(2, 2)
+axs[0, 0].plot(data["Datetime"], data["shares_purchased"])
+axs[0, 0].set_title('Shares purchased')
+axs[0, 0].set_xticks([])
+axs[0, 1].plot(data["Datetime"], data["shares_tot"], 'tab:orange')
+axs[0, 1].set_title('Shares in total')
+axs[0, 1].set_xticks([])
+axs[1, 0].plot(data["Datetime"], data["cost"], 'tab:green')
+axs[1, 0].set_title('Cost of shares in thousand USD')
+axs[1, 1].plot(data["Datetime"], data["interest"], 'tab:red')
+axs[1, 1].set_title('Cost of interest in thousand USD')
+
+for ax in axs.flat:
+    ax.set(xlabel='Time')
+    ax.tick_params(labelrotation=45)
+
 data_mlp = data[["Close", "LogReturn", "Volatility", "rf", "shares_purchased"]]
 # removed: "eu_call", "Expiry", "delta_call"
 data_mlp["Close"] = data_mlp["Close"]/100
@@ -76,7 +101,6 @@ plt.show()
 print("Begin scikit neural network regression example ")
 print("Predict shares purchased from other financial data")
 np.random.seed(82)
-np.set_printoptions(precision=3, suppress=True)
 
 # 1. load data
 x = data_mlp[["Close", "LogReturn", "Volatility", "rf"]]  # "eu_call", "Expiry", "delta_call"

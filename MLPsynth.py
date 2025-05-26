@@ -50,12 +50,17 @@ data_mlp["shares_purchased"] = data_mlp["shares_purchased"] + noise
 
 for i in range(len(data)):
     data["Datetime"].iloc[i] = dt.datetime(data["Year"][i], data["Month"][i], data["Day"][i])
-plt.plot(data_mlp_hist["shares_purchased"], label="Shares bought or sold")
-plt.plot(data_mlp["shares_purchased"], label="Shares bought or sold with noise")
+plt.plot(data_mlp_hist["shares_purchased"], label="Shares bought or sold", linewidth=1.2, color="red")
+plt.plot(data_mlp["shares_purchased"], label="Shares bought or sold with noise", linewidth=1.2, color="black")
 plt.grid()
 plt.ylabel("Shares")
 plt.xlabel("Time")
 plt.legend()
+a = plt.gca()
+xax = a.axes.get_xaxis()
+xax = xax.set_visible(False)
+yax = a.axes.get_yaxis()
+yax = yax.set_visible(False)
 plt.show()
 
 corr = data_mlp.corr()
